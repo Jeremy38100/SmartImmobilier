@@ -1,4 +1,4 @@
-const geolib = require('geolib');const r2 = require("r2");
+const geolib = require('geolib');
 const elevation = require('./elevation');
 
 const origin = {
@@ -12,14 +12,6 @@ const OFFSET_M = 20
 const MAX_BEARING = 270;
 const BEARING_OFFSET = 1;
 let bearing = 90;
-
-const req = async url => {
-  try {
-    return await r2(url).json;
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 async function start() {
   while (bearing <= MAX_BEARING ) {
