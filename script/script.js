@@ -2,7 +2,7 @@ window.onload = function() {
   start();
 }
 
-async function displayChart(points) {
+async function displayChart(points, sunPositions) {
   c3.generate({
     bindto: '#chart',
     data: {
@@ -37,6 +37,21 @@ async function displayChart(points) {
       y2: { show: true }
     }
   });
+  c3.generate({
+    bindto: '#chartSun',
+    data: {
+      columns: [
+        ['altitude'].concat(sunPositions.map(s => s.altitude)),
+        ['azimuthAltitude'].concat(sunPositions.map(s => s.azimuth)),
+        ['angles'].concat(points.map(p => p.angle)),
+        ['azimuthAngles'].concat(points.map(p => p.azimuth))
+      ],
+      xs:{
+        altitude:'azimuthAltitude',
+        angles:'azimuthAngles',
+      },
+    },
+  });
 }
 
 let map;
@@ -52,9 +67,11 @@ async function displayMap(points) {
 }
 
 let points = [];
+let sunPositions = [];
 async function start() {
   points = await load('data.json');
-  displayChart(points);
+  sunPositions = await load('sun.json');
+  displayChart(points, sunPositions);
   displayMap(points);
 }
 
