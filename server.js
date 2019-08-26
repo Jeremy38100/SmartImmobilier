@@ -10,9 +10,9 @@ const origin = {
 };
 
 const DISTANCE_TOTAL_M = 50000;
-const OFFSET_M = 50
-const MIN_BEARING = 45;
-const MAX_BEARING = 360-45;
+const OFFSET_M = 10
+const MIN_BEARING = 0;
+const MAX_BEARING = 360;
 const BEARING_OFFSET = 1;
 
 async function start() {
@@ -76,7 +76,7 @@ function getHours(year, month, day) {
   const hours = [];
   const date = Date.UTC(year, month, day);
   const DAY = 24*60;
-  const OFFSET_MIN = 30;
+  const OFFSET_MIN = 1;
   let minutes = 0;
   while (minutes < DAY) {
     hours.push(new Date(date + (minutes*60*1000)));
