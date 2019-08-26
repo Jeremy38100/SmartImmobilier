@@ -1,5 +1,6 @@
 const geolib = require('geolib');
 const elevation = require('./elevation');
+const fs = require('fs');
 
 const origin = {
   latitude: 45.217784,
@@ -30,7 +31,7 @@ async function start() {
     projections.push(highestPoint);
     bearing += BEARING_OFFSET;
   }
-  console.log(projections.map(e => Math.round(e.altitude)).join('\n'));
+  fs.writeFileSync('data.json', JSON.stringify(projections.map(e => e.altitude)));
 }
 
 start();
