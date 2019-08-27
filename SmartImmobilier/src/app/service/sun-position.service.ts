@@ -2,7 +2,7 @@ import { SunPosition, LatLng, Day } from './../model';
 import * as SunCalc from 'suncalc'
 import { Injectable } from '@angular/core';
 
-function radToDegree(rad: number): number { return rad*180/Math.PI; }
+function radToDegree(rad: number): number { return rad * 180 / Math.PI; }
 
 const MINUTES_IN_DAY = 24*60;
 
@@ -29,7 +29,6 @@ export class SunPositionService {
   // month 0 is JAN
   getSunPositions(origin: LatLng, day: Day): Promise<SunPosition[]> {
     return new Promise<SunPosition[]>(resolve => {
-
       resolve(this.getHours(day).map(timepoint => {
         const position = SunCalc.getPosition(timepoint, origin.latitude, origin.longitude)
         return {

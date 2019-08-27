@@ -1,7 +1,6 @@
 const {performance} = require('perf_hooks');
 const geolib = require('geolib');
 const elevation = require('./elevation');
-const SunCalc = require('suncalc');
 const fs = require('fs');
 
 const origin = {
@@ -69,31 +68,5 @@ function highestPointInBearing(bearing) {
 }
 
 function getAngle(height, distance) { return Math.atan(height / distance); }
-
-
-// Sun
-function getHours(year, month, day) {
-  const hours = [];
-  const date = Date.UTC(year, month, day);
-  const DAY = 24*60;
-  const OFFSET_MIN = 1;
-  let minutes = 0;
-  while (minutes < DAY) {
-    hours.push(new Date(date + (minutes*60*1000)));
-    minutes += OFFSET_MIN;
-  }
-  return hours;
-}
-
-let sunPositions = getHours(2019,11,21).map(date => {
-  const position = SunCalc.getPosition(date, origin.latitude, origin.longitude)
-  return {
-    altitude: Math.max(0, position.altitude * 180/Math.PI),
-    azimuth: (position.azimuth + Math.PI) * 180/Math.PI,
-    minutes: date.getHours()*60 + date.getMinutes()
-  }
-})
-
-fs.writeFileSync('sun.json', JSON.stringify(sunPositions));
 
 start();
