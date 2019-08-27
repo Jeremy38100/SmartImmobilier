@@ -23,20 +23,23 @@ router.get('/elevation-profile', async (req: Request, res: Response) => {
     if (params.latitude === undefined) throw new Error('Missing latitude');
     if (params.longitude === undefined) throw new Error('Missing longitude');
 
+    const origin: Location = {
+      latitude: Number(params.latitude),
+      longitude: Number(params.longitude)
+    };
+    await setElevation(origin);
+
     const azimuthsOptions: AzimuthsOptions = {
-      azimuthMin: params.azimuthMin | 0,
-      azimuthMax: params.azimuthMax | 360,
-      azimuthOffset: params.azimuthOffset | 1
+      azimuthMin: params.azimuthMin | 90,
+      azimuthMax: params.azimuthMax | 270,
+      azimuthOffset: params.azimuthOffset | 2
     };
 
     const highestPointInAzimuthOptions: HighestPointInAzimuthOptions = {
-      distanceMax: params.distanceMax | 50000,
-      distanceOffset: params.distanceOffset | 50,
-      origin: {
-        latitude: Number(params.latitude),
-        longitude: Number(params.longitude)
-      }
-    }
+      distanceMax: params.distanceMax | 25000,
+      distanceOffset: params.distanceOffset | 100,
+      origin
+    };
 
     const data = await Promise.all(getAzimuths(azimuthsOptions).map(azimuth => {
       return highestPointInAzimuth(azimuth, highestPointInAzimuthOptions);
@@ -83,10 +86,10 @@ async function highestPointInAzimuth(azimuth: number, options: HighestPointInAzi
     const currentLocation: Location = geolib.computeDestinationPoint(options.origin, distance, azimuth) as Location;
 
     await setElevation(currentLocation);
-    currentLocation.angle = angle(currentLocation.elevation! - options.origin.elevation!, distance) * 180/Math.PI;
+    currentLocation.angle = angle(currentLocation.elevation! - options.origin.elevation!, distance);
     if (currentLocation.angle < 0) currentLocation.angle = 0;
 
-    if (!highestPoint || currentLocation.angle > highestPoint.angle!) {
+    if (!highestPoint.angle || currentLocation.angle > highestPoint.angle!) {
       highestPoint = currentLocation;
     }
   }
@@ -100,7 +103,7 @@ function setElevation(location: Location): Promise<Location> {
         if (err) {
           reject(err);
         }
-        location.latitude = Math.round(elevation);
+        location.elevation = Math.round(elevation);
         resolve(location);
     });
   });
