@@ -6,8 +6,7 @@
   "dependencies": {
     "fs": "^0.0.1-security",
     "geolib": "^3.0.4",
-    "node-hgt": "^1.2.3",
-    "suncalc": "^1.8.0"
+    "node-hgt": "^1.2.3"
   },
   "devDependencies": {},
   "scripts": {

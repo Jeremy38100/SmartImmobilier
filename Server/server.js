@@ -85,7 +85,7 @@ function getHours(year, month, day) {
   return hours;
 }
 
-let sunPositions = getHours(2019,5,21).map(date => {
+let sunPositions = getHours(2019,11,21).map(date => {
   const position = SunCalc.getPosition(date, origin.latitude, origin.longitude)
   return {
     altitude: Math.max(0, position.altitude * 180/Math.PI),
