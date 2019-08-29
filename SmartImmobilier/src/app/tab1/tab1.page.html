@@ -7,8 +7,28 @@
 </ion-header>
 
 <ion-content>
-  <div style="height: 50vh;" leaflet
-  [leafletOptions]="options"
-  (leafletMapReady)="onMapReady($event)">
-  </div>
+  <ion-row>
+      <ion-button (click)="toggleSelectPointOnMap()" *ngIf="!isSelectPointOnMap">
+          <ion-icon slot="start" name="pin"></ion-icon>
+          Select on Map
+      </ion-button>
+      <div *ngIf="isSelectPointOnMap">
+          <ion-button (click)="validSelectionPoint()">
+              <ion-icon slot="start" name="checkmark"></ion-icon>
+              Valid selection
+          </ion-button>
+          <ion-button (click)="toggleSelectPointOnMap()">
+              Cancel
+          </ion-button>
+      </div>
+      <ion-input placeholder="latitude" [(ngModel)]="centerPoint.latitude"></ion-input>
+      <ion-input placeholder="longitude" [(ngModel)]="centerPoint.longitude"></ion-input>
+  </ion-row>
+    <div [className]="isSelectPointOnMap ? 'select-on-map' : ''">
+      <div class="map" leaflet
+           [leafletOptions]="options"
+           [leafletLayers]="layers"
+           (leafletMapReady)="onMapReady($event)">
+      </div>
+    </div>
 </ion-content>

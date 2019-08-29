@@ -1,6 +1,8 @@
-import { SunPosition, LatLng, Day } from './../model';
+import { SunPosition, Day } from './../model';
 import * as SunCalc from 'suncalc'
 import { Injectable } from '@angular/core';
+import {Location} from '../../../../shared/shared.model';
+
 
 function radToDegree(rad: number): number { return rad * 180 / Math.PI; }
 
@@ -27,10 +29,10 @@ export class SunPositionService {
   }
 
   // month 0 is JAN
-  getSunPositions(origin: LatLng, day: Day): Promise<SunPosition[]> {
+  getSunPositions(origin: Location, day: Day): Promise<SunPosition[]> {
     return new Promise<SunPosition[]>(resolve => {
       resolve(this.getHours(day).map(timepoint => {
-        const position = SunCalc.getPosition(timepoint, origin.latitude, origin.longitude)
+        const position = SunCalc.getPosition(timepoint, origin.latitude, origin.longitude);
         return {
           altitude: Math.max(0, radToDegree(position.altitude)),
           azimuth: radToDegree(position.azimuth + Math.PI),
