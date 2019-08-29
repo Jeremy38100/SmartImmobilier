@@ -1,3 +1,4 @@
+import { ChartModule } from 'angular-highcharts';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
@@ -12,6 +13,7 @@ import { Tab1Page } from './tab1.page';
     CommonModule,
     FormsModule,
     LeafletModule,
+    ChartModule,
     RouterModule.forChild([{ path: '', component: Tab1Page }])
   ],
   declarations: [Tab1Page]

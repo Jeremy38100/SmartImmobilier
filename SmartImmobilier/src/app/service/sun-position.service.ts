@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 function radToDegree(rad: number): number { return rad * 180 / Math.PI; }
 
 const MINUTES_IN_DAY = 24*60;
-
+const DEFAULT_OFFSET_MINUTES = 10;
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +14,7 @@ export class SunPositionService {
 
   constructor() { }
 
-
-  private getHours(day: Day, offsetMinutes: number = 1): Date[] {
+  private getHours(day: Day, offsetMinutes: number = DEFAULT_OFFSET_MINUTES): Date[] {
     const timepoints: Date[] = [];
     const date = Date.UTC(day.year, day.month, day.day);
     let minutes = 0;

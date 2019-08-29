@@ -1,6 +1,8 @@
 import { SunPositionService } from './../service/sun-position.service';
 import { Component, OnInit } from '@angular/core';
 import { tileLayer, latLng, Map } from 'leaflet';
+import { Chart } from 'angular-highcharts';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-tab1',
@@ -10,9 +12,42 @@ import { tileLayer, latLng, Map } from 'leaflet';
 export class Tab1Page implements OnInit {
 
   map: Map;
+  chart = new Chart({
+    chart: {
+      type: 'line'
+    },
+    title: {
+      text: 'Linechart'
+    },
+    credits: {
+      enabled: false
+    }
+  });
 
-  ngOnInit(): void {
+  constructor(private sun: SunPositionService,
+              private http: HttpClient) {
+    this.getSunPositions();
+    this.getElevationProfile();
+  }
+
+  async getElevationProfile() {
+    console.log(await this.http.get('api/topography/elevation-profile?latitude=45&longitude=5').toPromise());
+  }
+
+  async ngOnInit() {
     console.log('init');
+    const sunPositions = await this.sun.getSunPositions(
+      {latitude: 45, longitude: 5},
+      {year: 2019, month: 11, day: 21}
+    );
+    // this.chart.addSeries({
+    //     name: 'sun',
+    //     data: sunPositions.map(sunP => { return { x: sunP.azimuth, y: sunP.altitude }; })
+    // });
+  }
+
+  add() {
+    this.chart.addPoint(Math.floor(Math.random() * 10));
   }
 
   options = {
@@ -23,9 +58,6 @@ export class Tab1Page implements OnInit {
     center: latLng(45.178728, 5.749591)
   };
 
-  constructor(private sun: SunPositionService) {
-    this.getSunPositions();
-  }
 
   onMapReady(map: Map) {
     window.dispatchEvent(new Event('resize'));
