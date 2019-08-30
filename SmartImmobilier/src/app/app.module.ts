@@ -9,6 +9,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,7 +18,8 @@ import {LeafletModule} from '@asymmetrik/ngx-leaflet';
     BrowserModule,
     IonicModule.forRoot(),
     LeafletModule.forRoot(),
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [
     StatusBar,

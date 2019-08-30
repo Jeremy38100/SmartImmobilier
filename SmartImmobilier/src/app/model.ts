@@ -1,5 +1,5 @@
 export interface SunPosition {
-  altitude: number; // degree
+  angle: number; // degree
   azimuth: number; // degree 0=N 90=E
   minutes: number; // time in the day
 }

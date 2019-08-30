@@ -1,6 +1,7 @@
 export interface Location {
-  latitude: number;
-  longitude: number;
-  elevation?: number;
+  lat: number;
+  lng: number;
+  alt?: number;
   angle?: number;
+  azimuth?: number
 }

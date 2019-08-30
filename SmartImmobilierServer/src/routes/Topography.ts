@@ -20,18 +20,18 @@ router.get('/elevation-profile', async (req: Request, res: Response) => {
   try {
 
     const params = req.query;
-    if (params.latitude === undefined) throw new Error('Missing latitude');
-    if (params.longitude === undefined) throw new Error('Missing longitude');
+    if (params.lat === undefined) throw new Error('Missing lat');
+    if (params.lng === undefined) throw new Error('Missing lng');
 
     const origin: Location = {
-      latitude: Number(params.latitude),
-      longitude: Number(params.longitude)
+      lat: Number(params.lat),
+      lng: Number(params.lng)
     };
     await setElevation(origin);
 
     const azimuthsOptions: AzimuthsOptions = {
-      azimuthMin: params.azimuthMin | 90,
-      azimuthMax: params.azimuthMax | 270,
+      azimuthMin: params.azimuthMin | 0,
+      azimuthMax: params.azimuthMax | 360,
       azimuthOffset: params.azimuthOffset | 2
     };
 
@@ -78,15 +78,22 @@ function getAzimuths(options: AzimuthsOptions): number[] {
 
 async function highestPointInAzimuth(azimuth: number, options: HighestPointInAzimuthOptions): Promise<Location> {
   let highestPoint: Location = {
-    latitude: 0,
-    longitude: 0
+    lat: 0,
+    lng: 0,
+    azimuth
   };
   for (let i = 1; i < (options.distanceMax / options.distanceOffset); i++) {
     const distance: number = options.distanceOffset * i;
-    const currentLocation: Location = geolib.computeDestinationPoint(options.origin, distance, azimuth) as Location;
+    const computedLocation = geolib.computeDestinationPoint(options.origin, distance, azimuth);
+    const currentLocation: Location = {
+      lat: computedLocation.latitude,
+      lng: computedLocation.longitude,
+      alt: computedLocation.elevation,
+      azimuth
+    }
 
     await setElevation(currentLocation);
-    currentLocation.angle = angle(currentLocation.elevation! - options.origin.elevation!, distance);
+    currentLocation.angle = angle(currentLocation.alt! - options.origin.alt!, distance);
     if (currentLocation.angle < 0) currentLocation.angle = 0;
 
     if (!highestPoint.angle || currentLocation.angle > highestPoint.angle!) {
@@ -98,12 +105,12 @@ async function highestPointInAzimuth(azimuth: number, options: HighestPointInAzi
 
 function setElevation(location: Location): Promise<Location> {
   return new Promise((resolve, reject) => {
-    tiles.getElevation([location.latitude, location.longitude],
-      function(err: any, elevation: number) {
+    tiles.getElevation([location.lat, location.lng],
+      function(err: any, alt: number) {
         if (err) {
           reject(err);
         }
-        location.elevation = Math.round(elevation);
+        location.alt = Math.round(alt);
         resolve(location);
     });
   });
