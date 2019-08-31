@@ -8,11 +8,6 @@ import {Chart} from "angular-highcharts";
 import {SeriesAreaOptions, SeriesLineOptions, SeriesOptions} from "highcharts";
 import {SunPosition} from "../model";
 
-const SERIES_INDEX = {
-  ELEVATION_PROFILE: 0,
-  SUN: 1
-};
-
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -30,6 +25,8 @@ export class Tab1Page implements OnInit {
   markerSelection: Marker;
   markerCenter: Marker;
 
+  private series: SeriesOptions[] = [];
+
   polylineElevationProfile: Polyline;
 
   options = {
@@ -43,6 +40,7 @@ export class Tab1Page implements OnInit {
     title: {text: 'Elevation profile'},
     credits: {enabled: false}
   });
+  isChartInit = false;
 
   constructor(private sun: SunPositionService,
               private http: HttpClient) {
@@ -65,13 +63,24 @@ export class Tab1Page implements OnInit {
   }
 
   async drawElevationonChart(locations: Location[]) {
-    this.chart.ref.series.forEach(s => {
-      console.log(s.name);
-      s.remove(false, false)
-    });
-    this.chart.addSeries(elevationSerie(locations), true, true);
-    this.chart.addSeries(sunSerie(await this.sun.getSunPositions(this.centerPoint, {year: 2019, month: 6, day: 21})), true, true);
-    this.chart.addSeries(sunSerie(await this.sun.getSunPositions(this.centerPoint, {year: 2019, month: 11, day: 21})), true, true);
+    this.cleanChart();
+    this.addSerie(elevationSerie(locations));
+    this.addSerie(sunSerie(await this.sun.getSunPositions(this.centerPoint, {year: 2019, month: 5, day: 21}), '21/6', '#ffe800'));
+    this.addSerie(sunSerie(await this.sun.getSunPositions(this.centerPoint, {year: 2019, month: 11, day: 21}), '21/12', '#d7b727'));
+    if (!this.isChartInit) {
+      window.dispatchEvent(new Event('resize'));
+      this.isChartInit = true;
+    }
+  }
+
+  private cleanChart() {
+    while(this.chart.ref.series.length > 0) {
+      this.chart.ref.series[0].remove(true);
+    }
+  }
+
+  addSerie(serie: any): void {
+    this.chart.addSeries(serie, true, true);
   }
 
   drawElevationOnMap(locations: Location[]) {
@@ -125,10 +134,11 @@ export class Tab1Page implements OnInit {
   }
 }
 
-function sunSerie(sunPositions: SunPosition[]): SeriesLineOptions {
+function sunSerie(sunPositions: SunPosition[], name: string = 'Sun trajectory', color: string = ''): SeriesLineOptions {
   return {
     type: 'line',
-    name: 'Sun trajectory',
+    name,
+    color,
     data: sunPositions.map(s => [s.azimuth, s.angle])
   };
 }

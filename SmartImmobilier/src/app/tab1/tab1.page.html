@@ -24,13 +24,17 @@
     <ion-input placeholder="latitude" [(ngModel)]="centerPoint.lat"></ion-input>
     <ion-input placeholder="longitude" [(ngModel)]="centerPoint.lng"></ion-input>
   </ion-row>
-  <div [className]="isSelectPointOnMap ? 'select-on-map' : ''">
-    <div class="map" leaflet
-         [leafletOptions]="options"
-         (leafletMapReady)="onMapReady($event)">
-    </div>
-  </div>
   <ion-row>
-    <div [chart]="chart" style="margin-left: auto;margin-right: auto"></div>
+    <ion-col size="6">
+      <div [className]="isSelectPointOnMap ? 'select-on-map' : ''">
+        <div class="map" leaflet
+             [leafletOptions]="options"
+             (leafletMapReady)="onMapReady($event)">
+        </div>
+      </div>
+    </ion-col>
+    <ion-col size="6">
+      <div [chart]="chart" style="margin-left: auto;margin-right: auto"></div>
+    </ion-col>
   </ion-row>
 </ion-content>
